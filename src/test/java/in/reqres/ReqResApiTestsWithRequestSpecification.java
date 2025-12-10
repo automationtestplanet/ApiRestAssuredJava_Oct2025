@@ -2,23 +2,33 @@ package in.reqres;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReqResApiTests {
+public class ReqResApiTestsWithRequestSpecification {
+
+    RequestSpecification rs;
+
+    @BeforeTest
+    public void requestConfig(){
+        rs = new RequestSpecBuilder()
+                .setBaseUri("https://reqres.in")
+                .addHeader("x-api-key","reqres_c4dd8dedafed4c89ba31edf4eb997630")
+                .build();
+    }
 
 
     @Test
     public void getListOfUsersTest() {
-        Response response = RestAssured.given().queryParam("page", 2).header("x-api-key", "reqres_c4dd8dedafed4c89ba31edf4eb997630")
-                .when().get("https://reqres.in/api/users").then().statusCode(200).extract().response();
+        Response response = RestAssured.given().spec(rs).queryParam("page", 2)
+                .when().get("/api/users").then().statusCode(200).extract().response();
         response.prettyPrint();
         Assert.assertEquals(response.getStatusCode(), 200, "Validate Expected Status code");
         Assert.assertEquals(Integer.parseInt(response.jsonPath().get("page").toString()), 2, "Validate PageNum");
@@ -37,11 +47,9 @@ public class ReqResApiTests {
         Map<String,Integer> queryParams = new HashMap<>();
         queryParams.put("page",2);
 
-        Map<String,String> headers = new HashMap<>();
-        headers.put("x-api-key", "reqres_c4dd8dedafed4c89ba31edf4eb997630");
 
-        Response response = RestAssured.given().queryParams(queryParams).headers(headers)
-                .when().get("https://reqres.in/api/users").then().statusCode(200).extract().response();
+        Response response = RestAssured.given(rs).queryParams(queryParams)
+                .when().get("/api/users").then().statusCode(200).extract().response();
         response.prettyPrint();
         Assert.assertEquals(response.getStatusCode(), 200, "Validate Expected Status code");
         Assert.assertEquals(Integer.parseInt(response.jsonPath().get("page").toString()), 2, "Validate PageNum");
@@ -62,6 +70,8 @@ public class ReqResApiTests {
                 "    \"name\": \"morpheus\",\n" +
                 "    \"job\": \"leader\"\n" +
                 "}";
+
+
 
         Response response = RestAssured.given().header("x-api-key", "reqres_c4dd8dedafed4c89ba31edf4eb997630")
                 .header("Accept","*/*")
