@@ -6,7 +6,6 @@ import java.util.List;
 
 @lombok.Data
 public class ListOfUsers {
-
     public int page;
     @JsonProperty("per_page")
     public int perPage;
@@ -17,6 +16,4 @@ public class ListOfUsers {
     public Support support;
     @JsonProperty("_meta")
     public Meta meta;
-
-
 }

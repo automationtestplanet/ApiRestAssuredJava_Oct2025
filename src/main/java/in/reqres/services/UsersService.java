@@ -1,5 +1,6 @@
 package in.reqres.services;
 
+import in.reqres.response.models.CreateUserResponse;
 import in.reqres.response.models.ListOfUsers;
 import in.reqres.utils.RestMethods;
 import io.restassured.specification.RequestSpecification;
@@ -12,14 +13,16 @@ public class UsersService extends RestMethods {
     private final String USER_SERVICE = "/api/users";
 
     public ListOfUsers getListOfUsersByPageNo(RequestSpecification rs, Map<String, Object> queryParam, int expectedStatusCode) {
-        return getWithQueryParams(rs, USER_SERVICE, queryParam, expectedStatusCode).extract().as(ListOfUsers.class);
+        return getWithQueryParams(rs, USER_SERVICE, queryParam, expectedStatusCode)
+                .extract().as(ListOfUsers.class);
     }
 
-    public void createNewUserDetails(RequestSpecification rs, Object requestBody, int expectedStatusCode) {
+    public CreateUserResponse createNewUserDetails(RequestSpecification rs, Object requestBody, int expectedStatusCode) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Accept", "*/*");
         headers.put("Content-Type", "application/json");
-        post(rs, USER_SERVICE, headers, requestBody, expectedStatusCode);
+        return post(rs, USER_SERVICE, headers, requestBody, expectedStatusCode)
+                .extract().as(CreateUserResponse.class);
     }
 
     public void updateExistingUserDetailsByUserId(RequestSpecification rs, Object requestBody, Map<String, Object> pathParam, int expectedStatusCode) {
