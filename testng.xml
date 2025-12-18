@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true"
+          name="UserServiceTest">
+        <classes>
+            <class name="servicetest.UserServiceTest">
+                <methods>
+                    <include name="getListOfUsersByPageNumberTest"/>
+                    <include name="getListOfUsers_page1_shouldReturnUsers"/>
+                    <include name="getListOfUsers_missingPageParam_defaultsToPage1"/>
+                    <include name="getListOfUsers_nonExistentPage_returnsEmptyData"/>
+                    <include name="getListOfUsers_perPageConsistency"/>
+                    <include name="createNewUserTestWithRequestBodyAsString"/>
+                    <include name="createNewUserTestWithRequestBodyAsModelClass"/>
+                    <include name="createNewUserTestWithRequestBodyFromJson"/>
+                    <include name="createNewUserTestWithRequestBodyFromJsonAsStingParams"/>
+                    <include name="updateUserTestWithRequestBodyFromJsonAsStingParam"/>
+                    <include name="partialUpdateUserTestWithRequestBodyFromJsonAsStingParam"/>
+                    <include name="deleteUserTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

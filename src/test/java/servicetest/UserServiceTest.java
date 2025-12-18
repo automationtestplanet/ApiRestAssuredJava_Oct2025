@@ -16,7 +16,7 @@ public class UserServiceTest extends ReqResBaseTest {
     private final UsersService userService = new UsersService();
     private final ReadDataFromExternalFiles readData = new ReadDataFromExternalFiles();
 
-    @Test
+    @Test(groups = {"GetUserTest"})
     public void getListOfUsersByPageNumberTest() {
         Map<String, Object> queryParms = Map.of("page", 2);
         var listOfUsers = userService.getListOfUsersByPageNo(rs, queryParms, 200);
@@ -28,7 +28,7 @@ public class UserServiceTest extends ReqResBaseTest {
         }
     }
 
-    @Test
+    @Test(groups = {"GetUserTest"})
     public void getListOfUsers_page1_shouldReturnUsers() {
         Map<String, Object> queryParms = Map.of("page", 1);
         ListOfUsers listOfUsers = userService.getListOfUsersByPageNo(rs, queryParms, 200);
@@ -41,14 +41,14 @@ public class UserServiceTest extends ReqResBaseTest {
         }
     }
 
-    @Test
+    @Test(groups = {"GetUserTest"})
     public void getListOfUsers_missingPageParam_defaultsToPage1() {
         Map<String, Object> queryParms = Map.of();
         ListOfUsers listOfUsers = userService.getListOfUsersByPageNo(rs, queryParms, 200);
         Assert.assertEquals(listOfUsers.getPage(), 1, "Missing page param should default to page 1");
     }
 
-    @Test
+    @Test(groups = {"GetUserTest"})
     public void getListOfUsers_nonExistentPage_returnsEmptyData() {
         Map<String, Object> queryParms = Map.of("page", 1000);
         ListOfUsers listOfUsers = userService.getListOfUsersByPageNo(rs, queryParms, 200);
@@ -57,7 +57,7 @@ public class UserServiceTest extends ReqResBaseTest {
         Assert.assertTrue(listOfUsers.getData().isEmpty(), "Non-existent page should return empty data list");
     }
 
-    @Test
+    @Test(groups = {"GetUserTest"})
     public void getListOfUsers_perPageConsistency() {
         Map<String, Object> queryParms = Map.of("page", 1);
         ListOfUsers listOfUsers = userService.getListOfUsersByPageNo(rs, queryParms, 200);
@@ -68,7 +68,7 @@ public class UserServiceTest extends ReqResBaseTest {
     }
 
 
-    @Test
+    @Test(groups = {"CreateUserTest"})
     public void createNewUserTestWithRequestBodyAsString() {
         String requestBody = "{\"name\": \"morpheus\", \"job\": \"leader\"}";
         var createUserResponse = userService.createNewUserDetails(rs, requestBody, 201);
@@ -77,7 +77,7 @@ public class UserServiceTest extends ReqResBaseTest {
         Assert.assertNotNull(createUserResponse.getId(), "Id should not be null");
     }
 
-    @Test
+    @Test(groups = {"CreateUserTest"})
     public void createNewUserTestWithRequestBodyAsModelClass() {
         CreateUser createUser = new CreateUser();
         createUser.setName("morpheus");
@@ -88,7 +88,7 @@ public class UserServiceTest extends ReqResBaseTest {
         Assert.assertNotNull(createUserResponse.getId(), "Id should not be null");
     }
 
-    @Test
+    @Test(groups = {"CreateUserTest"})
     public void createNewUserTestWithRequestBodyFromJson() {
         CreateUser createUser = readData.readDataFromJsonFile(System.getProperty("user.dir") + "/src/test/resources/CreateUser.json");
         var createUserResponse = userService.createNewUserDetails(rs, createUser, 201);
@@ -97,17 +97,55 @@ public class UserServiceTest extends ReqResBaseTest {
         Assert.assertNotNull(createUserResponse.getId(), "Id should not be null");
     }
 
-    @Test
+    @Test(groups = {"CreateUserTest"})
     public void createNewUserTestWithRequestBodyFromJsonAsStingParams() {
-        String createUser = readData.readDataFromJsonFileAsString(System.getProperty("user.dir") + "/src/test/resources/CreateUserParameterData.json");
-        if (createUser == null) {
+        String createUserRequestBody = readData.readDataFromJsonFileAsString(System.getProperty("user.dir") + "/src/test/resources/CreateUserParameterData.json");
+        if (createUserRequestBody == null) {
             Assert.fail("Failed to read CreateUserParameterData.json as string");
             return;
         }
-        String requestBody = String.format(createUser, "morpheus", "leader");
+        String requestBody = String.format(createUserRequestBody, "morpheus", "leader");
         var createUserResponse = userService.createNewUserDetails(rs, requestBody, 201);
         Assert.assertEquals(createUserResponse.getName(), "morpheus", "Validate Name");
         Assert.assertEquals(createUserResponse.getJob(), "leader", "Validate Job");
         Assert.assertNotNull(createUserResponse.getId(), "Id should not be null");
+    }
+
+    @Test(groups = {"UpdateUserTest"})
+    public void updateUserTestWithRequestBodyFromJsonAsStingParam() {
+        String updateUserRequestBody = readData.readDataFromJsonFileAsString(System.getProperty("user.dir") + "/src/test/resources/UpdateUserWithParameterData.json");
+        if (updateUserRequestBody == null) {
+            Assert.fail("Failed to read CreateUserParameterData.json as string");
+            return;
+        }
+        String requestBody = String.format(updateUserRequestBody, "Raj", "Automation Tester");
+        Map<String, Object> pathParms = Map.of("id", 2);
+
+        var updateUserResponse = userService.updateExistingUserDetailsByUserId(rs, requestBody, pathParms, 200);
+
+        Assert.assertEquals(updateUserResponse.getName(), "Raj", "Validate Name");
+        Assert.assertEquals(updateUserResponse.getJob(), "Automation Tester", "Validate Job");
+    }
+
+    @Test(groups = {"UpdateUserTest"})
+    public void partialUpdateUserTestWithRequestBodyFromJsonAsStingParam() {
+        String updateUserRequestBody = readData.readDataFromJsonFileAsString(System.getProperty("user.dir") + "/src/test/resources/PartialUpdateUserWithParameterData.json");
+        if (updateUserRequestBody == null) {
+            Assert.fail("Failed to read CreateUserParameterData.json as string");
+            return;
+        }
+        String requestBody = String.format(updateUserRequestBody, "QA Engineer");
+        Map<String, Object> pathParms = Map.of("id", 2);
+
+        var updateUserResponse = userService.updateExistingUserPartialDetailsUserId(rs, requestBody, pathParms, 200);
+
+        Assert.assertEquals(updateUserResponse.getJob(), "QA Engineer", "Validate Job");
+    }
+
+    @Test(groups = {"DeleteUserTest"})
+    public void deleteUserTest() {
+        Map<String, Object> pathParms = Map.of("id", 2);
+        String deleteUserResponse = userService.deleteUserDetailsByUserId(rs, pathParms, 204);
+        Assert.assertEquals(deleteUserResponse, "", "Response must be empty");
     }
 }

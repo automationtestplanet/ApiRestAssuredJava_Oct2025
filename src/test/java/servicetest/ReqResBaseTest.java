@@ -11,7 +11,7 @@ public class ReqResBaseTest {
     private static final String API_KEY = "reqres_c4dd8dedafed4c89ba31edf4eb997630";
     public RequestSpecification rs;
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void requestConfig() {
         rs = new RequestSpecBuilder()
                 .setBaseUri(BASE_URI)

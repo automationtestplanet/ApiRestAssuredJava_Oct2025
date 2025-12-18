@@ -2,6 +2,7 @@ package in.reqres.services;
 
 import in.reqres.response.models.CreateUserResponse;
 import in.reqres.response.models.ListOfUsers;
+import in.reqres.response.models.UpdateUserResponse;
 import in.reqres.utils.RestMethods;
 import io.restassured.specification.RequestSpecification;
 
@@ -25,21 +26,21 @@ public class UsersService extends RestMethods {
                 .extract().as(CreateUserResponse.class);
     }
 
-    public void updateExistingUserDetailsByUserId(RequestSpecification rs, Object requestBody, Map<String, Object> pathParam, int expectedStatusCode) {
+    public UpdateUserResponse updateExistingUserDetailsByUserId(RequestSpecification rs, Object requestBody, Map<String, Object> pathParam, int expectedStatusCode) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Accept", "*/*");
         headers.put("Content-Type", "application/json");
-        putWithPathParam(rs, USER_SERVICE, headers, requestBody, pathParam, expectedStatusCode);
+        return putWithPathParam(rs, USER_SERVICE, headers, requestBody, pathParam, expectedStatusCode).extract().as(UpdateUserResponse.class);
     }
 
-    public void updateExistingUserPartialDetailsUserId(RequestSpecification rs, Object requestBody, Map<String, Object> pathParam, int expectedStatusCode) {
+    public UpdateUserResponse updateExistingUserPartialDetailsUserId(RequestSpecification rs, Object requestBody, Map<String, Object> pathParam, int expectedStatusCode) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Accept", "*/*");
         headers.put("Content-Type", "application/json");
-        patchWithPathParam(rs, USER_SERVICE, headers, requestBody, pathParam, expectedStatusCode);
+        return patchWithPathParam(rs, USER_SERVICE, headers, requestBody, pathParam, expectedStatusCode).extract().as(UpdateUserResponse.class);
     }
 
-    public void deleteUserDetailsByUserId(RequestSpecification rs, Map<String, Object> pathParam, int expectedStatusCode) {
-        deleteWithPathParam(rs, USER_SERVICE, pathParam, expectedStatusCode);
+    public String deleteUserDetailsByUserId(RequestSpecification rs, Map<String, Object> pathParam, int expectedStatusCode) {
+       return deleteWithPathParam(rs, USER_SERVICE, pathParam, expectedStatusCode).extract().response().asString();
     }
 }
