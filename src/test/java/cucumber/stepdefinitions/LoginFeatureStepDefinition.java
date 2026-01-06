@@ -1,10 +1,14 @@
 package cucumber.stepdefinitions;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.But;
+
+import java.util.List;
+import java.util.Map;
 
 public class LoginFeatureStepDefinition {
 
@@ -16,7 +20,7 @@ public class LoginFeatureStepDefinition {
 
     @Given("the user is on the Login Page")
     public void the_user_is_on_the_Login_Page() {
-        System.out.printf("User is on Login Page");
+        System.out.println("User is on Login Page");
     }
 
     @When("the user enter UserName {string} and Password {string}")
@@ -43,4 +47,21 @@ public class LoginFeatureStepDefinition {
     public void the_user_atar_should_not_contain_actual_image() {
         System.out.println("User avatar does not contain actual image");
     }
+
+    @Then("the user should not login to the Application")
+    public void the_user_should_not_login_to_the_application() {
+        System.out.println("User failed to log in to the application");
+    }
+
+
+    @When("the user enter UserName and Password")
+    public void the_user_enter_user_name_and_password(DataTable dataTable) {
+        List<Map<String, String>> listOfMaps =  dataTable.asMaps(String.class,String.class);
+        for (Map<String, String> map : listOfMaps) {
+            String userName = map.get("UserName");
+            String password = map.get("Password");
+            System.out.println("User enters Username: " + userName + " and Password: " + password);
+        }
+    }
+
 }

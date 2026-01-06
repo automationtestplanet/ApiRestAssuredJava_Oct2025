@@ -7,6 +7,11 @@ import io.cucumber.testng.CucumberOptions;
 @CucumberOptions(
         features = "classpath:CucumberFeatures",
         glue = {"cucumber.stepdefinitions"},
-        monochrome = true)
+        plugin = "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:",
+        monochrome = true,
+        dryRun = false,
+        tags = "@RegressionTest"
+
+)
 public class TestRunner extends AbstractTestNGCucumberTests {
 }
